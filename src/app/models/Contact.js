@@ -7,6 +7,12 @@ class Contacts extends Model {
         name: Sequelize.STRING,
         email: Sequelize.STRING,
         phone_number: Sequelize.STRING,
+        cep: Sequelize.STRING,
+        address: Sequelize.STRING,
+        city: Sequelize.STRING,
+        number: Sequelize.STRING,
+        state: Sequelize.STRING,
+        complement: Sequelize.STRING,
       },
       {
         sequelize,
@@ -17,7 +23,6 @@ class Contacts extends Model {
 
   static associate(models) {
     this.belongsTo(models.User, { foreignKey: 'user_id', as: 'user' });
-    this.belongsTo(models.Address, { foreignKey: 'address_id', as: 'address' });
   }
 }
 export default Contacts;

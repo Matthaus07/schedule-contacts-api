@@ -3,27 +3,28 @@ import User from '../models/User';
 
 class UserController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      email: Yup.string().required(),
-      phone_number: Yup.string().required().min(8),
-      password: Yup.string().required().min(6),
-    });
+    // const schema = Yup.object().shape({
+    //   name: Yup.string().required(),
+    //   email: Yup.string().required(),
+    //   // phone_number: Yup.string().required().min(8),
+    //   password: Yup.string().required().min(6),
+    // });
 
-    if (!(await schema.isValid(req.body)))
-      return res.status(401).json({ error: 'Validation Fails' });
+    // if (!(await schema.isValid(req.body)))
+    //   return res.status(401).json({ error: 'Validation Fails' });
 
     const userExist = await User.findOne({ where: { email: req.body.email } });
 
     if (userExist)
       return res.status(400).json({ error: 'O usuário já existe' });
 
-    const { name, email, phone_number } = await User.create(req.body);
+    const { name, email, phone_number, password } = await User.create(req.body);
 
     return res.json({
       name,
       email,
       phone_number,
+      password,
     });
   }
 
@@ -58,14 +59,13 @@ class UserController {
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
       return res.status(401).json({ error: 'Senha não existe' });
     }
-    const { id, name, phone_number, address_id } = await user.update(req.body);
+    const { id, name, phone_number } = await user.update(req.body);
 
     return res.json({
       id,
       name,
       email,
       phone_number,
-      address_id,
     });
   }
 }

@@ -1,7 +1,6 @@
 import * as Yup from 'yup';
 import Contact from '../models/Contact';
 import User from '../models/User';
-import Address from '../models/Address';
 
 class ContactsController {
   async index(req, res) {
@@ -12,15 +11,10 @@ class ContactsController {
       limit: 20,
       offset: (page - 1) * 20,
       include: [
-        // {
-        //   model: User,
-        //   as: 'user',
-        //   attributes: ['id', 'name'],
-        // },
         {
-          model: Address,
-          as: 'address',
-          attributes: ['id', 'cep'],
+          model: User,
+          as: 'user',
+          attributes: ['id', 'name'],
         },
       ],
     });
@@ -29,21 +23,68 @@ class ContactsController {
   }
 
   async store(req, res) {
-    // const schema = Yup.object().shape({
-    //   user_id: Yup.number().required(),
-    // });
-    // if (!(await schema.isValid(req.body)))
-    //   return res.status(400).json({ error: 'Validation Fails' });
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string().required(),
+      // phone_number: Yup.string().required().min(8),
+      phone_number: Yup.string().required().min(6),
+    });
 
-    const { name, email, phone_number } = req.body;
+    if (!(await schema.isValid(req.body)))
+      return res.status(401).json({ error: 'Validation Fails' });
+
+    const {
+      name,
+      email,
+      phone_number,
+      cep,
+      address,
+      city,
+      state,
+      complement,
+      number,
+    } = req.body;
     const contacts = await Contact.create({
       user_id: req.userId,
-      address_id: req.body.address_id,
+      name,
+      email,
+      phone_number,
+      cep,
+      address,
+      city,
+      state,
+      complement,
+      number,
+    });
+    return res.json({ contacts });
+  }
+
+  async update(req, res) {
+    const schema = Yup.object().shape({
+      name: Yup.string().required(),
+      email: Yup.string().required(),
+    });
+
+    if (!(await schema.isValid(req.body)))
+      return res.status(401).json({ error: 'Validation Fails' });
+
+    const { email } = req.body;
+
+    const { id, name, phone_number } = await Contact.update(req.body, {
+      where: { email },
+    });
+
+    const userExists = await Contact.findOne({ where: { email } });
+
+    if (!userExists)
+      return res.status(400).json({ error: 'O usuário não existe' });
+
+    return res.json({
+      id,
       name,
       email,
       phone_number,
     });
-    return res.json({ contacts });
   }
 }
 

@@ -3,7 +3,6 @@ import jwt from 'jsonwebtoken';
 import * as Yup from 'yup';
 import confAuth from '../../config/auth';
 import User from '../models/User';
-import Address from '../models/Address';
 
 class SessionController {
   async verify(req, res) {
@@ -17,13 +16,6 @@ class SessionController {
 
     const user = await User.findOne({
       where: { email },
-      // include: [
-      //   {
-      //     model: User,
-      //     as: 'address',
-      //     attributes: ['id', 'cep'],
-      //   },
-      // ],
     });
     if (!user) return res.status(401).json({ error: 'Usuário não encontrado' });
 

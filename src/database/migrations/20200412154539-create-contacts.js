@@ -20,11 +20,28 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      address_id: {
-        type: Sequelize.INTEGER,
-        references: { model: 'address', key: 'id' },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+      cep: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      address: {
+        type: Sequelize.STRING,
+        allowNull: true,
+      },
+      state: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      city: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      complement: {
+        type: Sequelize.STRING,
+        allowNull: false,
+      },
+      number: {
+        type: Sequelize.STRING,
         allowNull: true,
       },
       created_at: {
